@@ -1,0 +1,49 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+Deployment_Node(plc, "Big Bank plc", "Big Bank plc data center"){
+    Deployment_Node(dn, "bigbank-api***\tx8", "Ubuntu 16.04 LTS"){
+        Deployment_Node(apache, "Apache Tomcat", "Apache Tomcat 8.x"){
+            Container(api, "API Application", "Java and Spring MVC", "Provides Internet Banking functionality via a JSON/HTTPS API.")
+        }
+    }
+    Deployment_Node(bigbankdb01, "bigbank-db01", "Ubuntu 16.04 LTS"){
+        Deployment_Node(oracle, "Oracle - Primary", "Oracle 12c"){
+            ContainerDb(db, "Database", "Relational Database Schema", "Stores user registration information, hashed authentication credentials, access logs, etc.")
+        }
+    }
+    Deployment_Node(bigbankdb02, "bigbank-db02", "Ubuntu 16.04 LTS"){
+        Deployment_Node(oracle2, "Oracle - Secondary", "Oracle 12c"){
+            ContainerDb(bancoDadosUsuario, "Banco de Dados de Usuários", "Armazena informações do usuário, histórico de viagens, etc.")
+        }
+    }
+    Deployment_Node(bb2, "bigbank-web***\tx4", "Ubuntu 16.04 LTS"){
+        Deployment_Node(apache2, "Apache Tomcat", "Apache Tomcat 8.x"){
+            Container(web, "Aplicação Web", "Java e Spring MVC", "Delivers the static content and the Internet Banking single page application.")
+        }
+    }
+}
+
+Deployment_Node(mob, "dispositivo mobile do cliente", "Apple IOS ou Android"){
+    Container(appMobile, "Aplicativo Móvel", "JSON/HTTPS", "Fornece serviços aos clientes por meio de seus dispositivos móveis.")
+}
+
+Deployment_Node(comp, "computador do cliente", "Mircosoft Windows"){
+    Deployment_Node(browser, "Navegador Web", "Google Chrome, Mozilla Firefox"){
+        Container(servicoAPI, "Serviço de API", "JavaScript e Angular", "Fornece a funcionalidade para clientes atráves de seu navegador web.")
+    }
+}
+
+
+
+
+Rel(appMobile, servicoAPI, "Usa", "JSON/HTTPS")
+
+Rel(api, bigbankdb01, "Usa", "Conector de Banco de Dados")
+
+Rel(bancoDadosUsuario, servicoAPI, "Envia");
+Rel(bancoDadosUsuario, appMobile, "Envia");
+
+@enduml
