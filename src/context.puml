@@ -1,0 +1,19 @@
+@startuml
+
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(pcs, "Pessoa Cliente do sistema", "Um cliente com uma conta no sistema")
+Person(pps, "Pessoa Prestadora do sistema", "Um prestador com uma conta no sistema")
+
+System(sps, "Sistema prestação de serviço", "Permite aos usuários pedir um transporte com um prestador disponível")
+
+System_Ext(pagamentos, "Sistema de pagamento", "sistema de envio e recebimento de pagamentos")
+
+Rel(pcs, sps, "usa")
+Rel(pps, sps, "usa")
+Rel(pps, pagamentos, "Recebe pagamento", "o prestador pode receber pagamentos dos clientes")
+Rel(pcs, pagamentos, "Envia pagamento", "o cliente pode enviar pagamentos dos prestadores")
+
+@enduml
